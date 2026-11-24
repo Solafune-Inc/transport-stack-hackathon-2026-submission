@@ -1,0 +1,38 @@
+# Secrets: the GTFS-RT key lives in .env (cp .env.example .env)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Raw transit data stays local (data/LICENSE-NOTES.md rule 1): download it, don't commit it
+data/delhi_buses_static_gtfs/
+# Raw e-tickets and uncompressed model tables; the gzipped tables in data/eticketing/ are committed
+*.csv
+*.parquet
+*.zip
+*.pb
+
+# These embed raw GTFS-RT positions (src/make_leaflet_offline.py, src/demo_live_map.py, src/track_bus.py)
+reports/coverage_map*.html
+reports/live_bus_map.html
+reports/track_*.html
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node / Expo
+node_modules/
+mobile-implementation/.expo/
+mobile-implementation/dist/
+mobile-implementation/web-build/
+mobile-implementation/src/map/*.generated.ts
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
