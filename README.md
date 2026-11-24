@@ -94,6 +94,9 @@ browser / phone ──► web  (nginx :8080) ── /           app: Expo web bu
 | `/api/shapes?ids=…` | Route shapes |
 | `/api/plan?from=&to=&t=&date=&transfers=1` | Trip options, direct or with one change, with crowding |
 
+Interactive docs for every endpoint and parameter, where you can try each call: http://localhost:8787/docs
+(OpenAPI schema at `/openapi.json`).
+
 ## What we found
 
 The findings page (http://localhost:8080/findings/) walks through the analysis step by step, with
