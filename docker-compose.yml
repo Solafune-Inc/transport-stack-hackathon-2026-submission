@@ -1,0 +1,50 @@
+# Delhi bus crowding prototype: one command runs everything.
+#
+#   docker compose up --build
+#     app            http://localhost:8080   (phones on the same Wi-Fi: http://<this-machine-ip>:8080)
+#     team findings  http://localhost:8080/findings/
+#     API            http://localhost:8787/api/health
+#
+#   docker compose --profile test run --rm tests     # Python tests
+#
+# Needs the GTFS in ./data/delhi_buses_static_gtfs/ (see README.md, "Data").
+name: delhi-bus-crowding
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: runtime
+    ports:
+      - "8787:8787"
+    env_file:                          # optional: no key = no live buses
+      - path: .env                     # cp .env.example .env
+        required: false
+    volumes:
+      - ./data/delhi_buses_static_gtfs:/app/data/delhi_buses_static_gtfs:ro
+    healthcheck:                       # 200 once the network and crowding tables are loaded
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        EXPO_PUBLIC_LIVE_API_URL: ${EXPO_PUBLIC_LIVE_API_URL:-}
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  tests:
+    profiles: [test]
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      target: test

@@ -1,0 +1,9 @@
+# Runtime dependencies of the API image (docker/api.Dockerfile), pinned to the versions the
+# prototype was tested with. The full research / EDA set is in requirements.txt.
+fastapi==0.165.0
+uvicorn==0.54.0
+pandas==3.1.1
+numpy==2.5.5
+matplotlib==3.11.2              # imported by src/model/crowding.py (Agg backend, no plots served)
+gtfs-realtime-bindings==3.0.0   # decodes the GTFS-RT VehiclePositions feed
+protobuf==7.36.2

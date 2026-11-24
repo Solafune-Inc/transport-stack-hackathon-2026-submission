@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team Findings</title>
+<meta name="description" content="What the team found in Delhi's bus data, from the network and ticket EDA to the crowding model behind the journey planner.">
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef1f5; --text: #1b1f24; --muted: #5b6573;
+    --border: #dde2e8; --accent: #0b6bcb; --accent-ink: #ffffff; --chip: #e6f0fb; --chip-ink: #0b4f96;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1216; --surface: #171b21; --surface-2: #1f252d; --text: #e7ebf0; --muted: #9aa5b4;
+      --border: #2a313b; --accent: #5aa9f5; --accent-ink: #0b1220; --chip: #16283d; --chip-ink: #9cc9f7;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1216; --surface: #171b21; --surface-2: #1f252d; --text: #e7ebf0; --muted: #9aa5b4;
+    --border: #2a313b; --accent: #5aa9f5; --accent-ink: #0b1220; --chip: #16283d; --chip-ink: #9cc9f7;
+    --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 56px; }
+  header h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.2; margin: 0 0 8px; }
+  header p { color: var(--muted); margin: 0 0 16px; max-width: 70ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    display: inline-block; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;
+    border: 1px solid var(--border); color: var(--text); background: var(--surface);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  h2 { font-size: 1.25rem; margin: 40px 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 16px; }
+  .steps { display: grid; gap: 16px; counter-reset: step; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .step { position: relative; padding-left: 64px; }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 20px; top: 20px; width: 30px; height: 30px; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 700; font-size: .95rem;
+    background: var(--chip); color: var(--chip-ink);
+  }
+  .card h3 { margin: 0 0 2px; font-size: 1.1rem; }
+  .card ul { margin: 0 0 12px; padding-left: 20px; }
+  .card li { margin: 4px 0; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .95rem; }
+  .links a { color: var(--accent); font-weight: 600; }
+  code { font: .88em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+  .card { min-width: 0; overflow-wrap: break-word; }
+  @media (max-width: 520px) {
+    .card { padding: 16px; }
+    .step { padding-left: 16px; }
+    .step::before { position: static; margin-bottom: 10px; }
+  }
+  .src { color: var(--muted); font-size: .88rem; margin-top: 10px; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  figure { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  figure a { display: block; background: #fff; }
+  figure img { display: block; width: 100%; height: 150px; object-fit: contain; }
+  figcaption { padding: 8px 10px; font-size: .85rem; color: var(--muted); }
+  h3.group { margin: 24px 0 10px; font-size: 1rem; }
+  .team { display: inline-block; margin: 12px 0 0; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-weight: 600; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: .9rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>What we found in Delhi's bus data</h1>
+  <p>Our team's route from raw Delhi Transport Stack data to a crowding-aware journey planner.
+     We started with the bus network and October 2026's e-tickets, then matched every ticket to a stop.
+     From that we built per-route crowding and picked a demand model on a held-out week.
+     Every step links to its full report and the script that builds it.</p>
+  <div class="actions">
+    <a class="btn primary" href="/">Open the app</a>
+    <a class="btn" href="docs/TECHNICAL_NOTE.md">Technical note</a>
+    <a class="btn" href="reports/project_report.html">Project overview report</a>
+    <a class="btn" href="#figures">All figures</a>
+  </div>
+</header>
+
+<h2>The story in five steps</h2>
+<p class="lead">Each step answers a question the next one depends on.</p>
+
+<div class="steps">
+
+  <section class="card step">
+    <h3>The bus network: what does the schedule tell us?</h3>
+    <ul>
+      <li>2,554 routes, 6,812 stops, 65,322 trips and 2.39 million scheduled stop times, from two operators
+          (DTC 1,619 routes, Department of Transport 935).</li>
+      <li>A clean feed: no orphan trips, no unknown or unused stops, every route has trips.</li>
+      <li>Trip starts peak at 07:00 and again at 13:00–16:00, and service runs round the clock.</li>
+      <li><strong>The schedule is identical every day, and <code>direction_id</code> is blank.</strong>
+          The timetable gives the network's structure, but crowding has to come from ticketing.</li>
+    </ul>
+    <div class="links">
+      <a href="reports/eda_report.html">Network EDA report</a>
+      <a href="docs/EDA_FINDINGS.md">EDA notes</a>
+      <a href="reports/eda_full_metrics.json">Metrics (JSON)</a>
+    </div>
+    <p class="src">Built by <code>src/eda_gtfs.py</code>, <code>src/eda_full.py</code>, <code>src/make_eda_report.py</code>;
+       maps by <code>src/make_static_map.py</code>, <code>src/make_basemap_map.py</code></p>
+  </section>
+
+  <section class="card step">
+    <h3>Who rides when: e-ticketing, October 2026</h3>
+    <ul>
+      <li>2,559,899 tickets for 2.75 million passengers, 1–31 October, no duplicate rows.</li>
+      <li><strong>Every ticket records both the boarding and the alighting stop.</strong>
+          Loads along a route can be computed, not guessed.</li>
+      <li>Demand peaks at 09:00 and 18:00. Weekdays average about 91,000 tickets a day, weekends about 62,000.</li>
+      <li>Ticket routes match GTFS route names (99.9%). The vehicle number is missing on 48.5% of tickets.</li>
+    </ul>
+    <div class="links">
+      <a href="reports/eda_eticketing_report.html">E-ticketing EDA report</a>
+      <a href="reports/eda_eticketing_metrics.json">Metrics (JSON)</a>
+    </div>
+    <p class="src">Built by <code>src/eda_eticketing.py</code>, <code>src/make_eticketing_report.py</code></p>
+  </section>
+
+  <section class="card step">
+    <h3>Linking tickets to real stops</h3>
+    <ul>
+      <li>Ticket stop names are free text. Only about half match a GTFS stop name exactly.</li>
+      <li>Matching only against the stops each route serves (exact first, then fuzzy) resolves
+          <strong>97.9%</strong> of the 69,640 route-and-stop names, and 97.9% of tickets.</li>
+      <li>The remaining 2.1% stay unmatched on purpose: a wrong stop is worse than none.</li>
+    </ul>
+    <div class="links">
+      <a href="reports/stop_resolution_report.html">Stop resolution report</a>
+      <a href="reports/stop_resolution_metrics.json">Metrics (JSON)</a>
+    </div>
+    <p class="src">Built by <code>src/resolve_stops.py</code>, <code>src/make_stop_resolution_report.py</code></p>
+  </section>
+
+  <section class="card step">
+    <h3>Crowding along every route, hour and day type</h3>
+    <ul>
+      <li>The load on each stretch is boardings minus alightings along the GTFS stop order. It is scaled for
+          ticket coverage and the buses scheduled that hour, against 60 riders per bus.</li>
+      <li>89.1% of tickets are usable. 09:00 is the busiest hour network-wide, and the weekday morning
+          peak is about three times Sunday's.</li>
+      <li>Each route-hour carries a confidence flag (few buses or few tickets means low).
+          8,610 of 20,739 route-hours are high confidence.</li>
+      <li>It flags 1,129 weekday route-hours where the busiest stretch is over capacity: a ranked list for operators.</li>
+    </ul>
+    <div class="links">
+      <a href="reports/crowding_report.html">Crowding model report</a>
+      <a href="reports/crowding_metrics.json">Metrics (JSON)</a>
+    </div>
+    <p class="src">Built by <code>src/model/crowding.py</code>, <code>src/make_crowding_report.py</code></p>
+  </section>
+
+  <section class="card step">
+    <h3>Weekday, Saturday or Sunday? Choosing the demand model</h3>
+    <ul>
+      <li>We compared statistical models with gradient boosting on boardings per route, stop, hour and day type.
+          They were tuned on 1–24 October and tested once on the held-out week of 25–31 October.</li>
+      <li>The hierarchical Poisson–Gamma model (B2) is about 27% better than the monthly average at the
+          route-hour level the planner uses. Gradient boosting adds only about 3% at stop level, and nothing at route-hour level.</li>
+      <li>Under the gate set before the test, B2 serves the app: crowding is shown for weekdays, Saturdays and Sundays/holidays.</li>
+    </ul>
+    <div class="links">
+      <a href="reports/ml_model_comparison.json">Comparison results (JSON)</a>
+      <a href="docs/ML_PLAN.md">ML plan and decision</a>
+    </div>
+    <p class="src">Built by <code>src/ml/compare_models.py</code>, <code>src/ml/demand.py</code></p>
+  </section>
+
+</div>
+
+<h2>Live buses (GTFS-RT)</h2>
+<section class="card">
+  <ul>
+    <li>The real-time feed publishes about every 25 seconds. The 13 November snapshot held 2,483 buses.</li>
+    <li>The feed's <code>route_id</code> matches GTFS for 96% of buses, but its <code>trip_id</code>s don't,
+        so the server places each bus on its route itself.</li>
+    <li>The live maps from <code>src/decode_gtfsrt.py</code>, <code>src/track_bus.py</code> and <code>src/demo_live_map.py</code>
+        contain raw vehicle positions, so they aren't published here. The app shows live buses instead.</li>
+  </ul>
+</section>
+
+<h2 id="figures">Figures</h2>
+<p class="lead">Click a figure for full size. <a href="figures/">Browse the folder</a> for every file.</p>
+
+<h3 class="group">Bus network (GTFS)</h3>
+<div class="gallery">
+  <figure><a href="figures/network_basemap.png"><img loading="lazy" src="figures/network_basemap.png" alt="Delhi bus network over a basemap"></a><figcaption>Bus network over a basemap</figcaption></figure>
+  <figure><a href="figures/network_map.png"><img loading="lazy" src="figures/network_map.png" alt="All 2,554 route shapes and top hubs"></a><figcaption>All 2,554 route shapes and top hubs</figcaption></figure>
+  <figure><a href="figures/stops_map.png"><img loading="lazy" src="figures/stops_map.png" alt="Delhi bus stops"></a><figcaption>Delhi bus stops</figcaption></figure>
+  <figure><a href="figures/stops_heat_basemap.png"><img loading="lazy" src="figures/stops_heat_basemap.png" alt="Stop density over a basemap"></a><figcaption>Stop density over a basemap</figcaption></figure>
+  <figure><a href="figures/stop_density_hexbin.png"><img loading="lazy" src="figures/stop_density_hexbin.png" alt="Stop density hexbin"></a><figcaption>Stop density (hexbin)</figcaption></figure>
+  <figure><a href="figures/stop_kde.png"><img loading="lazy" src="figures/stop_kde.png" alt="Stop density heatmap"></a><figcaption>Stop density heatmap</figcaption></figure>
+  <figure><a href="figures/routes_per_stop.png"><img loading="lazy" src="figures/routes_per_stop.png" alt="Routes per stop"></a><figcaption>Routes per stop</figcaption></figure>
+  <figure><a href="figures/stops_per_trip.png"><img loading="lazy" src="figures/stops_per_trip.png" alt="Stops per trip"></a><figcaption>Stops per trip</figcaption></figure>
+  <figure><a href="figures/trip_starts_by_hour.png"><img loading="lazy" src="figures/trip_starts_by_hour.png" alt="Bus trip starts by hour of day"></a><figcaption>Trip starts by hour of day</figcaption></figure>
+  <figure><a href="figures/vehicles_by_hour.png"><img loading="lazy" src="figures/vehicles_by_hour.png" alt="Buses in service by hour of day"></a><figcaption>Buses in service by hour</figcaption></figure>
+  <figure><a href="figures/trip_dur_dist.png"><img loading="lazy" src="figures/trip_dur_dist.png" alt="Trip duration and distance"></a><figcaption>Trip duration and distance</figcaption></figure>
+  <figure><a href="figures/speed.png"><img loading="lazy" src="figures/speed.png" alt="Scheduled speed"></a><figcaption>Scheduled speed, overall and by hour</figcaption></figure>
+  <figure><a href="figures/spacing_headway.png"><img loading="lazy" src="figures/spacing_headway.png" alt="Stop spacing and AM-peak headway"></a><figcaption>Stop spacing and morning-peak headway</figcaption></figure>
+</div>
+
+<h3 class="group">E-ticketing (October 2026)</h3>
+<div class="gallery">
+  <figure><a href="figures/etk_tickets_by_hour.png"><img loading="lazy" src="figures/etk_tickets_by_hour.png" alt="Tickets by hour of day"></a><figcaption>Tickets by hour of day</figcaption></figure>
+  <figure><a href="figures/etk_tickets_by_date.png"><img loading="lazy" src="figures/etk_tickets_by_date.png" alt="Daily ticket volume"></a><figcaption>Tickets per day</figcaption></figure>
+  <figure><a href="figures/etk_tickets_by_dow.png"><img loading="lazy" src="figures/etk_tickets_by_dow.png" alt="Tickets by day of week"></a><figcaption>Tickets by day of week</figcaption></figure>
+  <figure><a href="figures/etk_top_routes.png"><img loading="lazy" src="figures/etk_top_routes.png" alt="Top 15 routes by tickets"></a><figcaption>Top 15 routes by tickets</figcaption></figure>
+  <figure><a href="figures/etk_fare_distribution.png"><img loading="lazy" src="figures/etk_fare_distribution.png" alt="Fare distribution"></a><figcaption>Fare distribution</figcaption></figure>
+  <figure><a href="figures/etk_boardings_route_hour.png"><img loading="lazy" src="figures/etk_boardings_route_hour.png" alt="Boardings by route and hour"></a><figcaption>Boardings by route and hour</figcaption></figure>
+</div>
+
+<h3 class="group">Crowding model</h3>
+<div class="gallery">
+  <figure><a href="figures/crowd_occ_by_hour.png"><img loading="lazy" src="figures/crowd_occ_by_hour.png" alt="Mean peak occupancy by hour"></a><figcaption>Peak occupancy by hour</figcaption></figure>
+  <figure><a href="figures/crowd_occ_by_hour_daytype.png"><img loading="lazy" src="figures/crowd_occ_by_hour_daytype.png" alt="Peak occupancy by hour and day type"></a><figcaption>Peak occupancy by hour and day type</figcaption></figure>
+  <figure><a href="figures/crowd_profile_example.png"><img loading="lazy" src="figures/crowd_profile_example.png" alt="Load profile along one route"></a><figcaption>Load profile along one route</figcaption></figure>
+  <figure><a href="figures/crowd_route_hour_heatmap.png"><img loading="lazy" src="figures/crowd_route_hour_heatmap.png" alt="Peak occupancy by route and hour"></a><figcaption>Peak occupancy by route and hour</figcaption></figure>
+</div>
+
+<h2>Team</h2>
+<p class="team">SOLAFUNE</p>
+
+<footer>
+  Data source: Delhi Transport Stack (Department of Transport, GNCTD), used under the Transport Stack data
+  License Agreement v1.0. Reports and figures are derived, aggregated works made by the team; raw data is not included.
+</footer>
+
+</div>
+</body>
+</html>

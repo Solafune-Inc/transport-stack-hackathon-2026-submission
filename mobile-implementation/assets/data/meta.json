@@ -1,0 +1,47 @@
+{
+  "attribution": "Data source: Delhi Transport Stack (Department of Transport, GNCTD). Used under the Transport Stack data License Agreement v1.0. Derived and aggregated by the team; see meta.changes.",
+  "generated_at": "2026-11-23T06:00:16Z",
+  "sources": {
+    "gtfs": "Delhi Buses GTFS Static v1",
+    "eticketing": "Delhi mobile e-ticketing, October 2026 (1-31)",
+    "live": "Delhi Buses GTFS-RT VehiclePositions feed"
+  },
+  "assumptions": {
+    "coverage": 0.045,
+    "capacity": 60,
+    "days": 31,
+    "min_trips_day_high_conf": 2,
+    "min_pax_month_high_conf": 30,
+    "day_types": {
+      "weekday": 20,
+      "saturday": 5,
+      "sunday_holiday": 6
+    },
+    "daytype_model": "b2",
+    "levels": [
+      [
+        0.5,
+        "Low"
+      ],
+      [
+        0.8,
+        "Medium"
+      ],
+      [
+        1.0,
+        "High"
+      ],
+      [
+        null,
+        "Very High"
+      ]
+    ]
+  },
+  "changes": [
+    "Crowding = monthly boardings minus alightings along the GTFS stop order, scaled by 1/coverage and scheduled trips per hour (src/model/crowding.py).",
+    "Day types: each route-hour's monthly profile is scaled to weekdays / Saturdays / Sundays+holidays by the B2 demand model (hierarchical Poisson-Gamma smoothing of boardings per route, stop, hour and day type; src/ml/demand.py), chosen over gradient boosting on a held-out week (src/ml/compare_models.py).",
+    "Low confidence: < 2 scheduled buses/day in the hour or < 30 ticketed passengers in the month for that route-hour.",
+    "Stop busyness = tickets boarding/alighting at the stop (all routes) per hour of ticket purchase, scaled by 1/coverage/days, then by the network day-type factor of that hour. Alighting hour = purchase hour.",
+    "Route shapes simplified (Douglas-Peucker, 4 m, 5 dp) by the API server; vehicle ids of live buses replaced with hashes."
+  ]
+}

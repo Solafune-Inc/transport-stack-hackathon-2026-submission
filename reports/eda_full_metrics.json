@@ -1,0 +1,214 @@
+{
+  "counts": {
+    "routes": 2554,
+    "stops": 6812,
+    "trips": 65322,
+    "stop_times": 2385381,
+    "shape_points": 765633
+  },
+  "routes": {
+    "agency": {
+      "DTC": 1619,
+      "DOT": 935
+    },
+    "dir_suffix": {
+      "UP": 1252,
+      "DOWN": 1231,
+      "?": 71
+    },
+    "corridors": 1383,
+    "paired_corridors": 1171
+  },
+  "stops": {
+    "routes_per_stop": {
+      "count": 6812.0,
+      "mean": 12.66,
+      "std": 15.22,
+      "min": 1.0,
+      "25%": 2.0,
+      "50%": 6.0,
+      "75%": 18.0,
+      "max": 139.0
+    },
+    "top_hubs": [
+      {
+        "stop": "ISBT Nityanand Marg",
+        "routes": 139,
+        "trips": 4192
+      },
+      {
+        "stop": "Azadpur Terminal",
+        "routes": 123,
+        "trips": 3624
+      },
+      {
+        "stop": "Police Station Najafgarh",
+        "routes": 120,
+        "trips": 2687
+      },
+      {
+        "stop": "Najafghar Health Centre",
+        "routes": 119,
+        "trips": 2811
+      },
+      {
+        "stop": "Jharoda Crossing / Najafgarh",
+        "routes": 112,
+        "trips": 2602
+      },
+      {
+        "stop": "Najafgarh Delhi Gate",
+        "routes": 103,
+        "trips": 2436
+      },
+      {
+        "stop": "GPO Kasmeri Gate",
+        "routes": 101,
+        "trips": 2855
+      },
+      {
+        "stop": "GGS University ISBT Kashmere Gate",
+        "routes": 99,
+        "trips": 2822
+      },
+      {
+        "stop": "Super Bazar",
+        "routes": 99,
+        "trips": 2665
+      },
+      {
+        "stop": "Jahangirpuri Metro Station GT Road",
+        "routes": 91,
+        "trips": 2535
+      },
+      {
+        "stop": "Maharaja Agrasen Hospital",
+        "routes": 88,
+        "trips": 2336
+      },
+      {
+        "stop": "Shivaji Park",
+        "routes": 88,
+        "trips": 2350
+      }
+    ],
+    "dup_coord_cells": 24
+  },
+  "trips": {
+    "dur_min": {
+      "count": 65322.0,
+      "mean": 63.3,
+      "std": 34.8,
+      "min": 0.9,
+      "25%": 37.1,
+      "50%": 61.4,
+      "75%": 85.4,
+      "max": 318.9
+    },
+    "dist_km": {
+      "count": 65322.0,
+      "mean": 20.71,
+      "std": 11.2,
+      "min": 0.33,
+      "25%": 12.33,
+      "50%": 19.87,
+      "75%": 28.21,
+      "max": 106.78
+    },
+    "speed_kmh": {
+      "count": 65322.0,
+      "mean": 19.9,
+      "std": 1.6,
+      "min": 14.0,
+      "25%": 19.0,
+      "50%": 19.6,
+      "75%": 20.3,
+      "max": 36.7
+    }
+  },
+  "stop_times": {
+    "dwell_pct_nonzero": 0.0,
+    "spacing_km": {
+      "count": 2320059.0,
+      "mean": 0.535,
+      "std": 0.372,
+      "min": 0.0,
+      "25%": 0.326,
+      "50%": 0.455,
+      "75%": 0.641,
+      "max": 25.441
+    },
+    "median_hop_min": 1.52,
+    "fare_stage_pct": 100.0,
+    "fare_stages_per_trip_median": 1.0
+  },
+  "frequency": {
+    "active_by_hour": {
+      "0": 396,
+      "1": 318,
+      "2": 175,
+      "3": 139,
+      "4": 731,
+      "5": 2834,
+      "6": 5471,
+      "7": 7449,
+      "8": 7939,
+      "9": 7564,
+      "10": 7055,
+      "11": 7166,
+      "12": 7472,
+      "13": 7657,
+      "14": 7788,
+      "15": 7987,
+      "16": 7978,
+      "17": 7534,
+      "18": 7135,
+      "19": 6932,
+      "20": 7167,
+      "21": 6711,
+      "22": 5295,
+      "23": 3365
+    },
+    "am_headway_min": {
+      "count": 1629.0,
+      "mean": 30.7,
+      "std": 21.2,
+      "min": 10.0,
+      "25%": 16.0,
+      "50%": 25.0,
+      "75%": 36.8,
+      "max": 160.0
+    }
+  },
+  "speed_by_hour": {
+    "0": 20.2,
+    "1": 20.8,
+    "2": 20.9,
+    "3": 20.9,
+    "4": 19.9,
+    "5": 19.8,
+    "6": 19.9,
+    "7": 19.9,
+    "8": 19.9,
+    "9": 19.8,
+    "10": 19.8,
+    "11": 19.8,
+    "12": 20.0,
+    "13": 20.0,
+    "14": 20.0,
+    "15": 20.0,
+    "16": 19.9,
+    "17": 19.9,
+    "18": 19.9,
+    "19": 19.8,
+    "20": 19.9,
+    "21": 19.9,
+    "22": 20.0,
+    "23": 20.1
+  },
+  "shapes": {
+    "n_shapes": 2554,
+    "pts_per_shape_median": 284,
+    "len_km_median": 19.4
+  }
+}

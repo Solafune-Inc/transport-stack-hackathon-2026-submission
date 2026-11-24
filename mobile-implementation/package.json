@@ -1,0 +1,47 @@
+{
+  "name": "mobile-implementation",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@maplibre/maplibre-gl-leaflet": "^0.1.4",
+    "expo": "~58.0.26",
+    "expo-constants": "~58.0.16",
+    "expo-font": "~58.0.12",
+    "expo-status-bar": "~58.0.5",
+    "leaflet": "^1.9.4",
+    "leaflet-polylineoffset": "^1.1.1",
+    "maplibre-gl": "^5.24.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-web": "^0.21.4",
+    "react-native-webview": "14.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/leaflet": "^1.9.22",
+    "@types/react": "~19.3.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~58.0.4",
+    "jest": "^30.5.2",
+    "jest-expo": "^58.0.15",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "build:map": "node scripts/build-map.mjs",
+    "postinstall": "node scripts/build-map.mjs",
+    "start": "npm run build:map && expo start",
+    "android": "npm run build:map && expo start --android",
+    "ios": "npm run build:map && expo start --ios",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "lint": "expo lint"
+  },
+  "private": true,
+  "jest": {
+    "preset": "jest-expo"
+  }
+}

@@ -1,0 +1,23 @@
+# Transport Stack Hackathon 2026 — Problem 2 prototype
+# Python 3.12+ recommended.  Install:  pip install -r requirements.txt
+pandas>=3.1
+numpy>=2.5
+matplotlib>=3.10
+
+# Reporting & maps (EDA report + offline coverage maps)
+folium>=0.20
+contextily>=1.7      # bakes basemap tiles into static images (offline-safe)
+markdown>=3.11       # renders HACKATHON.md / PLAN.md into the combined report
+
+# Real-time feed
+gtfs-realtime-bindings>=1.0  # decode GTFS-RT VehiclePositions.pb (src/decode_gtfsrt.py, src/api/)
+
+# Crowding model experiments (src/ml/compare_models.py)
+scikit-learn>=1.6
+
+# Tests (python -m pytest)
+pytest>=8
+
+# Live API backend for the mobile app (src/api/main.py)
+fastapi>=0.120
+uvicorn>=0.38

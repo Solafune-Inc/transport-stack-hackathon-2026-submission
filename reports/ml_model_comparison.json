@@ -1,0 +1,722 @@
+{
+  "question": "Statistical models vs gradient boosting for boardings per (route, stop, hour, day type)",
+  "generated_at": "2026-11-23T09:57:48+05:30",
+  "target": "mobile-ticket boardings per day; hour = purchase hour; day types weekday, saturday, sunday_holiday",
+  "splits": {
+    "tuning": "train 1-17 Oct, validate 18-24 Oct",
+    "final_test": "train 1-24 Oct, test 25-31 Oct (run once with the tuned settings)"
+  },
+  "metrics": {
+    "deviance": "mean Poisson deviance per cell (lower is better)",
+    "wape": "sum |actual - predicted| / sum actual",
+    "spearman_weekday_10plus": "rank correlation over weekday route-hours with >= 10 test pax",
+    "pearson_dispersion": "mean (actual - predicted)^2 / predicted over route-hours expecting >= 1 passenger; 1 = Poisson noise only",
+    "predicted_over_actual": "total predicted / total actual passengers"
+  },
+  "tuned_params": {
+    "B0_floor": 0.01,
+    "B1_floor": 0.01,
+    "B2": {
+      "k0": 0.3,
+      "kA": 3.0,
+      "kB": 100.0,
+      "kS0": 30.0,
+      "kS": 300.0,
+      "kC": 30.0
+    },
+    "B2_at_grid_edge": [],
+    "GLM_alpha": 3e-09,
+    "GBM": {
+      "config": 1,
+      "mode": "full",
+      "trees": 1000
+    },
+    "GBM+B2": {
+      "config": 1,
+      "mode": "full",
+      "trees": 1000
+    }
+  },
+  "features": {
+    "gbm_structural": [
+      "hour",
+      "day_type",
+      "band",
+      "pos",
+      "relpos",
+      "n_stops",
+      "is_last",
+      "sched_route",
+      "sched_stop_all",
+      "stop_routes",
+      "route_trips_day",
+      "direction",
+      "night",
+      "lat",
+      "lon"
+    ],
+    "gbm_historical": [
+      "h_cell",
+      "h_cell_all_days",
+      "h_route_stop",
+      "h_route_hour",
+      "h_route_hour_daytype",
+      "h_route",
+      "h_stop_other_routes",
+      "h_b2"
+    ]
+  },
+  "validation": {
+    "info": {
+      "cells": 3051204,
+      "train_days": {
+        "weekday": 11,
+        "saturday": 3,
+        "sunday_holiday": 3
+      },
+      "eval_days": {
+        "weekday": 4,
+        "saturday": 1,
+        "sunday_holiday": 2
+      },
+      "train_pax": 1434760.0,
+      "eval_pax": 534886.0,
+      "eval_pax_outside_cells_pct": 1.66
+    },
+    "models": {
+      "B0": {
+        "stop": {
+          "deviance": 0.391694703613583,
+          "wape": 1.1212622415754387
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.16248426800337915
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.7244600597353471
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.5012408075351005
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 2.7232370335575746
+          }
+        },
+        "route_hour": {
+          "deviance": 2.3148142888277983,
+          "wape": 0.49456166627227605,
+          "spearman_weekday_10plus": 0.8827342661672948,
+          "pearson_dispersion": 2.680760961882689,
+          "predicted_over_actual": 1.2207015144595186
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.856183915937862
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.72754234609023
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 3.3042599839056073
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 6.927116340981807
+          }
+        },
+        "fit_seconds": 0.2,
+        "stop_deviance_vs_B2_pct": -16.53
+      },
+      "B1": {
+        "stop": {
+          "deviance": 0.46314533446574235,
+          "wape": 1.077154026135992
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.16248426800337915
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.9330776733358033
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.9746927491907011
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 2.6724115546622977
+          }
+        },
+        "route_hour": {
+          "deviance": 1.9594645842014926,
+          "wape": 0.4241940705370831,
+          "spearman_weekday_10plus": 0.8816475158211571,
+          "pearson_dispersion": 2.4532350197725257,
+          "predicted_over_actual": 1.1715722411835556
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.856183915937862
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.7841065304459427
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 2.967000636361729
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 3.829962808261645
+          }
+        },
+        "fit_seconds": 0.2,
+        "stop_deviance_vs_B2_pct": -37.78
+      },
+      "B2": {
+        "stop": {
+          "deviance": 0.33614162098187095,
+          "wape": 0.967226846925257
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.12761654436107264
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.6629960848912371
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.344883033991061
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 2.0534940693236243
+          }
+        },
+        "route_hour": {
+          "deviance": 1.4667915682981507,
+          "wape": 0.3473692081605522,
+          "spearman_weekday_10plus": 0.8838981995981103,
+          "pearson_dispersion": 2.6159196167535916,
+          "predicted_over_actual": 1.0326888450845313
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.2683669676266774
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.3088256470266395
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 2.5280471272740295
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 3.399112402924704
+          }
+        },
+        "fit_seconds": 17.4,
+        "stop_deviance_vs_B2_pct": 0.0
+      },
+      "GLM": {
+        "stop": {
+          "deviance": 0.346746242096089,
+          "wape": 1.0020113854471397
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.13021480090288345
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.679711697167494
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.4019233821022823
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 2.1996617670397995
+          }
+        },
+        "route_hour": {
+          "deviance": 1.5292371872820414,
+          "wape": 0.36143125979310436,
+          "spearman_weekday_10plus": 0.8848407038926914,
+          "pearson_dispersion": 2.633168707602823,
+          "predicted_over_actual": 1.0617209519024637
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.2687621304263054
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.3885134611465857
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 2.6045093241897646
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 3.506200318025165
+          }
+        },
+        "fit_seconds": 335.1,
+        "stop_deviance_vs_B2_pct": -3.15
+      },
+      "GBM": {
+        "stop": {
+          "deviance": 0.32427547480473184,
+          "wape": 0.9604145431733323
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.12175131347320468
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.6437452428260111
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.3066271144225106
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 1.9446939876332445
+          }
+        },
+        "route_hour": {
+          "deviance": 1.4404819780336224,
+          "wape": 0.3488925747043591,
+          "spearman_weekday_10plus": 0.886516803717293,
+          "pearson_dispersion": 2.5140336419354634,
+          "predicted_over_actual": 1.0475164807594963
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.22287055261675812
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.2911551739837386
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 2.517380836253999
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 3.354585272790125
+          }
+        },
+        "fit_seconds": 776.7,
+        "stop_deviance_vs_B2_pct": 3.53
+      },
+      "GBM+B2": {
+        "stop": {
+          "deviance": 0.32523939539339103,
+          "wape": 0.9672833806900074
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2199015,
+            "deviance": 0.12192406239500188
+          },
+          "1-4": {
+            "cells": 626787,
+            "deviance": 0.645185764940508
+          },
+          "5-19": {
+            "cells": 188274,
+            "deviance": 1.3124998071012988
+          },
+          "20+": {
+            "cells": 37128,
+            "deviance": 1.9595793843566893
+          }
+        },
+        "route_hour": {
+          "deviance": 1.4721214942979912,
+          "wape": 0.35890523043516637,
+          "spearman_weekday_10plus": 0.8856832906872516,
+          "pearson_dispersion": 2.5346527590730763,
+          "predicted_over_actual": 1.0803770225835665
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 26583,
+            "deviance": 0.23617053961812645
+          },
+          "1-29": {
+            "cells": 52281,
+            "deviance": 1.2962844474170987
+          },
+          "30-99": {
+            "cells": 17022,
+            "deviance": 2.5683157327072785
+          },
+          "100+": {
+            "cells": 11412,
+            "deviance": 3.52161348080622
+          }
+        },
+        "fit_seconds": 899.3,
+        "stop_deviance_vs_B2_pct": 3.24
+      }
+    }
+  },
+  "test": {
+    "info": {
+      "cells": 3072126,
+      "train_days": {
+        "weekday": 15,
+        "saturday": 4,
+        "sunday_holiday": 5
+      },
+      "eval_days": {
+        "weekday": 5,
+        "saturday": 1,
+        "sunday_holiday": 1
+      },
+      "train_pax": 1969646.0,
+      "eval_pax": 621168.0,
+      "eval_pax_outside_cells_pct": 1.46
+    },
+    "models": {
+      "B0": {
+        "stop": {
+          "deviance": 0.36352137189638795,
+          "wape": 0.9332971248894523
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.14061561649515922
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.6100642822919593
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.222056664158287
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 2.02715655692467
+          }
+        },
+        "route_hour": {
+          "deviance": 1.8799766847184687,
+          "wape": 0.3850532208034364,
+          "spearman_weekday_10plus": 0.9016220161768047,
+          "pearson_dispersion": 2.527342391008272,
+          "predicted_over_actual": 1.0185461021874278
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.8201597111605767
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.4011404949169117
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.547048587212299
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 4.336427993090052
+          }
+        },
+        "fit_seconds": 0.0,
+        "stop_deviance_vs_B2_pct": -10.84
+      },
+      "B1": {
+        "stop": {
+          "deviance": 0.4123060158168773,
+          "wape": 0.9173119001564002
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.14061561649515922
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.7378977972912298
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.4914808158411967
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 2.015229744023151
+          }
+        },
+        "route_hour": {
+          "deviance": 1.7234710433994798,
+          "wape": 0.34227558824426346,
+          "spearman_weekday_10plus": 0.9006816871347636,
+          "pearson_dispersion": 2.3518804652405794,
+          "predicted_over_actual": 1.0726528443968129
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.8201597111605767
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.4791840677979333
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.5383933038017026
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 2.9792590713735816
+          }
+        },
+        "fit_seconds": 0.0,
+        "stop_deviance_vs_B2_pct": -25.71
+      },
+      "B2": {
+        "stop": {
+          "deviance": 0.32797386180767285,
+          "wape": 0.8460183048737661
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.11019558323984488
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.5742254957872815
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.1770457901869966
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 1.8489591731876258
+          }
+        },
+        "route_hour": {
+          "deviance": 1.3692594729241885,
+          "wape": 0.2938289847670372,
+          "spearman_weekday_10plus": 0.9044048065472305,
+          "pearson_dispersion": 2.6854337322229473,
+          "predicted_over_actual": 0.9633286825531285
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.2240696865550283
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.0972058946918126
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.335962429924384
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 2.915849459691763
+          }
+        },
+        "fit_seconds": 0.1,
+        "stop_deviance_vs_B2_pct": 0.0
+      },
+      "GLM": {
+        "stop": {
+          "deviance": 0.34156383169498905,
+          "wape": 0.8842505093965248
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.11207291767450069
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.5898196990505928
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.2436206386142246
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 2.0451151808124464
+          }
+        },
+        "route_hour": {
+          "deviance": 1.402258514794311,
+          "wape": 0.3008107854520078,
+          "spearman_weekday_10plus": 0.9042587313329569,
+          "pearson_dispersion": 2.6537019652473046,
+          "predicted_over_actual": 0.978176147702064
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.21260727751284933
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.1489169759788798
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.384938222636999
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 2.937560929169611
+          }
+        },
+        "fit_seconds": 89.0,
+        "stop_deviance_vs_B2_pct": -4.14
+      },
+      "GBM": {
+        "stop": {
+          "deviance": 0.31829845076634966,
+          "wape": 0.8421285761375574
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.10421094005326008
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.5725458146955091
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.1438263158870652
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 1.7094193548709844
+          }
+        },
+        "route_hour": {
+          "deviance": 1.385409746742687,
+          "wape": 0.30116651771327524,
+          "spearman_weekday_10plus": 0.9057339790094021,
+          "pearson_dispersion": 2.5551165985231563,
+          "predicted_over_actual": 0.9813868144143268
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.17063832732697232
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.1763242621188696
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.3227821195077776
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 2.867558010793796
+          }
+        },
+        "fit_seconds": 391.1,
+        "stop_deviance_vs_B2_pct": 2.95
+      },
+      "GBM+B2": {
+        "stop": {
+          "deviance": 0.31821735365287823,
+          "wape": 0.8407452286466939
+        },
+        "stop_deviance_by_train_pax": {
+          "0": {
+            "cells": 2098974,
+            "deviance": 0.10447341946139481
+          },
+          "1-4": {
+            "cells": 677391,
+            "deviance": 0.572304083327645
+          },
+          "5-19": {
+            "cells": 237450,
+            "deviance": 1.1430648795688718
+          },
+          "20+": {
+            "cells": 58311,
+            "deviance": 1.7016073074482527
+          }
+        },
+        "route_hour": {
+          "deviance": 1.3873847550563296,
+          "wape": 0.3006124342128317,
+          "spearman_weekday_10plus": 0.9058791074270828,
+          "pearson_dispersion": 2.5439493492059695,
+          "predicted_over_actual": 0.9940466573880309
+        },
+        "route_hour_deviance_by_train_pax": {
+          "0": {
+            "cells": 24135,
+            "deviance": 0.18904730430424524
+          },
+          "1-29": {
+            "cells": 50937,
+            "deviance": 1.1765662602395826
+          },
+          "30-99": {
+            "cells": 18357,
+            "deviance": 2.3202099870457724
+          },
+          "100+": {
+            "cells": 15357,
+            "deviance": 2.8548890371916413
+          }
+        },
+        "fit_seconds": 422.0,
+        "stop_deviance_vs_B2_pct": 2.97
+      }
+    }
+  },
+  "runtime_sec": 2943.4
+}

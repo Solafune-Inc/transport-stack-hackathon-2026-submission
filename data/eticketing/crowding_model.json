@@ -1,0 +1,24 @@
+{
+  "daytype_model": "b2",
+  "generated_at": "2026-11-23T08:45:15Z",
+  "daytypes": [
+    "weekday",
+    "saturday",
+    "sunday_holiday"
+  ],
+  "days_by_daytype": {
+    "weekday": 20,
+    "saturday": 5,
+    "sunday_holiday": 6
+  },
+  "min_trips_day": 2,
+  "min_pax_month": 30,
+  "b2_params": {
+    "k0": 0.3,
+    "kA": 3.0,
+    "kB": 100.0,
+    "kS0": 30.0,
+    "kS": 300.0,
+    "kC": 30.0
+  }
+}

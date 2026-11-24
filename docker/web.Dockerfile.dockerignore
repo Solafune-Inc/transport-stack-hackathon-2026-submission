@@ -1,0 +1,13 @@
+# Build context for docker/web.Dockerfile: the app sources, findings hub, reports and figures only.
+**/.DS_Store
+.env
+.env.*
+data
+src
+tests
+mobile-implementation/node_modules
+mobile-implementation/.expo
+mobile-implementation/dist
+mobile-implementation/web-build
+mobile-implementation/.local
+mobile-implementation/.env*

@@ -1,0 +1,13 @@
+# Build context for docker/api.Dockerfile. The API key and the raw GTFS never enter the image.
+**/.DS_Store
+**/__pycache__
+**/.pytest_cache
+.env
+.env.*
+data/delhi_buses_static_gtfs
+data/eticketing/*.csv
+mobile-implementation
+reports
+notebooks
+findings
+docs

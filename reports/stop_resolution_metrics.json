@@ -1,0 +1,21 @@
+{
+  "distinct_pairs": 69640,
+  "total_occurrences": 5119798,
+  "distinct_resolved_pct": 97.9,
+  "ticket_weighted_resolved_pct": 97.9,
+  "method_distinct": {
+    "exact_route": 46566,
+    "fuzzy_route": 18930,
+    "fuzzy_global": 1938,
+    "exact_global": 763,
+    "unresolved": 1443
+  },
+  "method_occ_pct": {
+    "exact_route": 66.2,
+    "fuzzy_route": 27.9,
+    "fuzzy_global": 2.8,
+    "exact_global": 0.9,
+    "unresolved": 2.1
+  },
+  "runtime_sec": 45.2
+}
